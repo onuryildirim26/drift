@@ -127,6 +127,23 @@ test("align undoes a rotation rather than doubling it", () => {
     `alignment did not improve the fit: ${rmsOf(r.aligned).toFixed(1)} vs ${rmsOf(b).toFixed(1)}`);
 });
 
+test("the rotation estimate reports a numeric score", () => {
+  // align() gates on this score. When it was left off the returned object the
+  // gate read `undefined > 14`, which is false, so rotation was silently
+  // switched off for everyone while every other number still looked right.
+  const a = scene(W, H, 23);
+  const rs = R.estimateRotationScale(R.hann(a, W, H), R.hann(rotateCCW(a, W, H, 10), W, H), W, H);
+  assert.strictEqual(typeof rs.psr, "number", "psr missing from the estimate");
+  assert.ok(isFinite(rs.psr) && rs.psr > 0, `psr was ${rs.psr}`);
+});
+
+test("align really applies the rotation it measured", () => {
+  const a = scene(W, H, 29);
+  const r = R.align(a, rotateCCW(a, W, H, 11), W, H, { rotation: true });
+  assert.ok(Math.abs(r.angle) > 5,
+    `align reported ${r.angle.toFixed(2)}deg, so the estimate was discarded`);
+});
+
 test("log-polar stage recovers a scale change", () => {
   const a = scene(W, H, 31);
   const b = R.warp(a, W, H, 0, 1.25, 0, 0);
@@ -184,6 +201,33 @@ test("identical images report almost no change", () => {
   const r = R.align(a, a, W, H, {});
   const d = R.differenceMask(a, r.aligned, W, H, 25);
   assert.ok(d.changedRatio < 0.002, `expected ~0 change, got ${d.changedRatio}`);
+});
+
+test("an unrelated pair scores below the suspicion threshold", () => {
+  // Two scenes built from different seeds share nothing but their statistics.
+  const a = scene(W, H, 91);
+  const b = scene(W, H, 17);
+  const r = R.align(a, b, W, H, {});
+  assert.ok(r.psr < R.PSR_SUSPECT,
+    `unrelated pair scored ${r.psr.toFixed(1)}, at or above the ${R.PSR_SUSPECT} threshold`);
+});
+
+test("a genuine pair scores well above the suspicion threshold", () => {
+  const a = scene(W, H, 91);
+  const b = R.warp(a, W, H, 0, 1, -19, 11);
+  const r = R.align(a, b, W, H, {});
+  assert.ok(r.psr > R.PSR_SUSPECT * 1.2,
+    `genuine pair scored only ${r.psr.toFixed(1)}`);
+  assert.ok(r.confidence > 0.5, `confidence only ${r.confidence.toFixed(2)}`);
+});
+
+test("identical images do not score as a failed match", () => {
+  // A perfect delta leaves a surface of zeros; dividing by that spread must
+  // not turn the best possible result into the worst.
+  const a = scene(W, H, 77);
+  const r = R.align(a, a, W, H, {});
+  assert.ok(r.psr > R.PSR_SUSPECT, `identical images scored ${r.psr.toFixed(1)}`);
+  assert.strictEqual(r.confidence, 1, `confidence was ${r.confidence}`);
 });
 
 test("the FFT round-trips", () => {

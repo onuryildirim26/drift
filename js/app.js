@@ -112,7 +112,17 @@
     timer = setTimeout(compare, 30);
   }
 
+  /** Drop any comparison that has been scheduled but has not started. */
+  function cancelPending() {
+    clearTimeout(timer);
+    timer = null;
+  }
+
   function compare() {
+    // The slots can empty between scheduling and firing — pressing Start over
+    // right after nudging a control is enough. There is nothing to compare.
+    if (!state.A || !state.B) return;
+
     $("busy").hidden = false;
     $("result").hidden = true;
     $("busyText").textContent = $("rot").checked
@@ -136,6 +146,7 @@
 
   function runCompare() {
     const A = state.A, B = state.B;
+    if (!A || !B) return;
     const fitA = fitToGrid(A, GRID), fitB = fitToGrid(B, GRID);
     const imgA = fitA.data, imgB = fitB.data;
     const gA = R.toGray(imgA.data, GRID, GRID);
@@ -196,9 +207,14 @@
     const pct = diff.changedRatio * 100;
     let txt, warn = false;
 
-    if (res.confidence < 0.08) {
-      txt = "These two images do not appear to show the same scene — the alignment " +
-            "found no clear match, so the red marks below are not meaningful.";
+    // Measured on the correlation surface itself: how far the peak stands above
+    // the rest of it. Below the threshold there is no dominant alignment, which
+    // usually means the two pictures are not of the same thing. The result is
+    // still shown — this is a warning, not a verdict.
+    if (res.psr < R.PSR_SUSPECT) {
+      txt = "These two images may not show the same scene. The alignment found no " +
+            "clear winner, so treat the figures above and the red marks below with " +
+            "suspicion.";
       warn = true;
     } else {
       // Two separate clauses: where it sits, and how it is turned. Folding a
@@ -359,6 +375,7 @@
   });
 
   $("reset").addEventListener("click", () => {
+    cancelPending();
     state.A = state.B = state.last = null;
     ["A", "B"].forEach(w => {
       const d = $("drop" + w);

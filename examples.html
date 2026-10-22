@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Examples — Drift</title>
 <meta name="description" content="Four pairs of images with known, exact differences. Open any of them in Drift and watch it measure the shift and mark the change.">
-<link rel="icon" href="assets/favicon.svg">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -48,8 +50,9 @@
       <div>
         <h3>Same scene, twice</h3>
         <p>Drift measures how one frame moved relative to the other. Two unrelated
-           photographs give it nothing to lock onto, and it will say so rather than
-           invent an answer.</p>
+           photographs give it nothing to lock onto. It checks how far the
+           correlation peak stands above the rest of the surface and warns you when
+           nothing clearly wins — a useful guard, though not a guarantee.</p>
       </div>
       <div>
         <h3>Mostly unchanged</h3>

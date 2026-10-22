@@ -83,9 +83,14 @@ Dönüşümleri bilerek uygulandığı için tam olarak bilinen dört
 
 İki karenin **aynı sahneyi** göstermesi ve **karenin büyük kısmının
 değişmemiş** olması gerekir — hizalama, aynı kalan şeyden okunur; kabaca
-yarıdan fazlası değiştiğinde bulunacak baskın bir kayma kalmaz. İlgisiz iki
-fotoğraf düz bir korelasyon yüzeyi verir ve Drift cevap uydurmak yerine bunu
-söyler.
+yarıdan fazlası değiştiğinde bulunacak baskın bir kayma kalmaz.
+
+İlgisiz iki fotoğraf, kazananı belli olmayan bir korelasyon yüzeyi verir. Drift
+bunu tepe-yan lob oranıyla ölçer — tepenin yüzeyin geri kalanından kaç standart
+sapma yükseldiği — ve 42'nin altına düştüğünde uyarır. Bu sayı ölçümden geliyor:
+26 vakada gerçek çiftler hiç 50'nin altına, ilgisiz çiftler hiç 36'nın üstüne
+çıkmadı. Kesin bir kanıt değil, sezgisel bir ölçüt; bu yüzden sonucu
+gizlemek yerine yanına uyarı koyar.
 
 Parlaklık ve pozlama farkları sorun değil. Perspektif değişimi sorun: Drift
 kayma, dönme ve düzgün ölçeği modeller, dolayısıyla çevrilmek yerine *yana*

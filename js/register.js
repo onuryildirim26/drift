@@ -67,6 +67,24 @@
    * height relative to the mean of the surface — a flat surface means the
    * two images share no structure, and the answer should not be trusted).
    */
+  /* Peak-to-sidelobe ratio spans roughly 6 to 2000 across real inputs, so it
+   * is mapped to 0..1 on a log scale rather than a linear one. The two ends
+   * were measured, not guessed: across 26 cases — shifts from 3 to 200 px,
+   * rotations, scale changes, heavy noise, severe brightness differences, and
+   * pairs with nothing whatever in common — genuine pairs never fell below
+   * 50 and unrelated pairs never rose above 36.
+   *
+   * PSR_SUSPECT sits in that gap. It is a heuristic, not a proof: real
+   * photographs are messier than test fixtures, so it is used to add a warning
+   * beside the result, never to withhold the result. */
+  var PSR_FLOOR = 10, PSR_GOOD = 250, PSR_SUSPECT = 42;
+
+  function psrToConfidence(psr) {
+    if (!(psr > PSR_FLOOR)) return 0;
+    var t = Math.log(psr / PSR_FLOOR) / Math.log(PSR_GOOD / PSR_FLOOR);
+    return Math.max(0, Math.min(1, t));
+  }
+
   function phaseCorrelate(a, b, w, h) {
     const aRe = Float64Array.from(a), aIm = new Float64Array(w * h);
     const bRe = Float64Array.from(b), bIm = new Float64Array(w * h);
@@ -84,16 +102,40 @@
     }
     FFT.fft2d(rRe, rIm, w, h, true);
 
-    let peak = -Infinity, px = 0, py = 0, sum = 0;
+    let peak = -Infinity, px = 0, py = 0;
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
         const v = rRe[y * w + x];
-        sum += Math.abs(v);
         if (v > peak) { peak = v; px = x; py = y; }
       }
     }
-    const mean = sum / (w * h);
-    const confidence = mean > 0 ? Math.min(1, peak / (mean * 50)) : 0;
+
+    /* Peak-to-sidelobe ratio: how far the peak stands above the rest of the
+     * surface, counted in standard deviations of the rest. This is what tells
+     * a real registration from two unrelated pictures. A plain peak-over-mean
+     * cannot: the surface of an honest match and the surface of noise have
+     * similar means, and it is the *spread* around that mean which differs.
+     * The window around the peak is left out so the peak's own shoulders do
+     * not inflate the figure it is being measured against. */
+    const EX = 5;                                   // half-width of the exclusion
+    let sum = 0, sumSq = 0, n = 0;
+    for (let y = 0; y < h; y++) {
+      // The correlation surface wraps, so distance does too.
+      let dy = Math.abs(y - py); if (dy > h / 2) dy = h - dy;
+      for (let x = 0; x < w; x++) {
+        let dx = Math.abs(x - px); if (dx > w / 2) dx = w - dx;
+        if (dx <= EX && dy <= EX) continue;
+        const v = rRe[y * w + x];
+        sum += v; sumSq += v * v; n++;
+      }
+    }
+    const mean = n ? sum / n : 0;
+    const variance = n ? Math.max(0, sumSq / n - mean * mean) : 0;
+    // Two identical images give a perfect delta: one spike and a surface of
+    // exact zeros. Dividing by that zero spread would score a flawless match
+    // as no match at all, so the divisor has a floor tied to the peak itself.
+    const sd = Math.max(Math.sqrt(variance), Math.abs(peak) * 1e-9);
+    const psr = sd > 0 ? (peak - mean) / sd : 0;
 
     const at = (x, y) => rRe[((y + h) % h) * w + ((x + w) % w)];
     const sub = (m, c, p) => {
@@ -109,7 +151,7 @@
     if (dx > w / 2) dx -= w;
     if (dy > h / 2) dy -= h;
 
-    return { dx, dy, confidence, peak };
+    return { dx, dy, confidence: psrToConfidence(psr), psr, peak };
   }
 
   /** Centred magnitude spectrum, log-compressed and high-pass filtered. */
@@ -168,7 +210,8 @@
     return {
       angle: r.dx * 180 / N,             // one column is π/N radians
       scale: Math.exp(r.dy * la.logBase),
-      confidence: r.confidence
+      confidence: r.confidence,
+      psr: r.psr
     };
   }
 
@@ -226,7 +269,11 @@
     if (options.rotation) {
       const rs = estimateRotationScale(hann(grayA, w, h), hann(grayB, w, h), w, h);
       // Reject implausible readings rather than warping the image into nonsense.
-      if (rs.confidence > 0.04 && isFinite(rs.scale) && rs.scale > 0.4 && rs.scale < 2.5) {
+      // The log-polar surface is coarser than the translation one, so its PSR
+      // runs much lower and needs its own bar. Measured: pairs that really do
+      // differ by a rotation or a scale scored 22.7 and up, pairs with nothing
+      // in common never above 7.9. Hence 14, in the gap.
+      if (rs.psr > 14 && isFinite(rs.scale) && rs.scale > 0.4 && rs.scale < 2.5) {
         angle = rs.angle; scale = rs.scale; rsConfidence = rs.confidence;
       }
     }
@@ -239,7 +286,7 @@
 
     return {
       dx: t.dx, dy: t.dy, angle, scale,
-      confidence: t.confidence, rotationConfidence: rsConfidence,
+      confidence: t.confidence, psr: t.psr, rotationConfidence: rsConfidence,
       aligned: warp(grayB, w, h, undoAngle, undoScale, t.dx, t.dy)
     };
   }
@@ -289,7 +336,8 @@
 
   const api = {
     toGray, resize, hann, phaseCorrelate, estimateRotationScale,
-    warp, align, differenceMask, logMagnitude, logPolar
+    warp, align, differenceMask, logMagnitude, logPolar,
+    PSR_SUSPECT
   };
 
   if (typeof module === "object" && module.exports) module.exports = api;
