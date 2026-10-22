@@ -1,0 +1,36 @@
+{
+  "name": "drift-image-registration",
+  "version": "1.0.0",
+  "description": "Find what moved between two images. Phase correlation in the browser, with no dependencies.",
+  "homepage": "https://onuryildirim26.github.io/drift/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onuryildirim26/drift.git"
+  },
+  "license": "MIT",
+  "author": "Onur Yıldırım",
+  "keywords": [
+    "image-registration",
+    "phase-correlation",
+    "fourier-mellin",
+    "image-difference",
+    "fft",
+    "computer-vision"
+  ],
+  "main": "js/register.js",
+  "files": [
+    "js/",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "serve": "python -m http.server 8000"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "private": false
+}

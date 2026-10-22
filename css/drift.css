@@ -176,6 +176,16 @@ a{color:inherit}
   *{transition:none !important}
 }
 
+/* ---- support link ----
+   A quiet outline button rather than a plain link: visible enough to be found,
+   restrained enough that it never competes with the result. */
+.coffee{display:inline-flex;align-items:center;gap:8px;margin-top:4px;
+  padding:8px 15px;border:1px solid var(--line);border-radius:999px;
+  background:var(--panel);color:var(--muted);text-decoration:none;
+  font-size:14px;font-weight:500;transition:color .15s,border-color .15s}
+.coffee:hover{color:var(--accent);border-color:var(--accent)}
+.coffee:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
 /* ---- theme switch ---- */
 @media (prefers-reduced-motion:no-preference){
   body,.top,.drop,.panel,.viewer,.stage,.ctl,.ex,.foot{

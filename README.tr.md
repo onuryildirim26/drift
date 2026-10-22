@@ -1,17 +1,24 @@
-# Drift
+<div align="center">
 
-**İki görüntü arasında ne kaydığını bulur.** Aynı sahnenin iki fotoğrafını
-bırakın; Drift birinin ne kadar kaydığını ölçer, ikisini üst üste oturtur ve
-gerçek farkların hepsini kırmızıya boyar.
+<img src="assets/banner.png" alt="Drift — iki görüntü arasında ne kaydığını bulur" width="860">
 
-**[Aç →](https://onuryildirim26.github.io/drift/)** ·
-[Örnekler](https://onuryildirim26.github.io/drift/examples.html) ·
-[English readme](README.md)
+### [**→ Drift'i aç**](https://onuryildirim26.github.io/drift/) &nbsp;·&nbsp; [Örnekler](https://onuryildirim26.github.io/drift/examples.html) &nbsp;·&nbsp; [English](README.md)
 
-Hiçbir şey yüklenmiyor. Sunucu yok, hesap yok, derleme adımı yok — tamamı,
-açtığınız sekmede çalışan üç JavaScript dosyası.
+[![Testler](https://github.com/onuryildirim26/drift/actions/workflows/test.yml/badge.svg)](https://github.com/onuryildirim26/drift/actions/workflows/test.yml)
+[![Lisans: MIT](https://img.shields.io/badge/lisans-MIT-black)](LICENSE)
+[![Bağımlılık: yok](https://img.shields.io/badge/ba%C4%9F%C4%B1ml%C4%B1l%C4%B1k-yok-2f7d5b)](package.json)
+[![Tarayıcınızda çalışır](https://img.shields.io/badge/çalışır-tarayıcınızda-e5484d)](https://onuryildirim26.github.io/drift/)
+
+<a href="https://buymeacoffee.com/onuryildirim26"><img src="https://img.buymeacoffee.com/button-api/?text=Bana%20bir%20kahve%20%C4%B1smarla&emoji=&slug=onuryildirim26&button_colour=e5484d&font_colour=ffffff&font_family=Inter&outline_colour=ffffff&coffee_colour=FFDD00" alt="Bana bir kahve ısmarla" height="44"></a>
+
+</div>
 
 ---
+
+Aynı sahnenin iki fotoğrafını bırakın. Drift birinin ne kadar kaydığını ölçer,
+ikisini üst üste oturtur ve gerçek farkların hepsini kırmızıya boyar. Hiçbir şey
+yüklenmiyor — sunucu yok, hesap yok, derleme adımı yok; açtığınız sekmede
+çalışan dört JavaScript dosyası.
 
 ## Ne yapar
 

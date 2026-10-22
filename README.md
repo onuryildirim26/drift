@@ -1,17 +1,24 @@
-# Drift
+<div align="center">
 
-**Find what moved between two images.** Drop in two photos of the same scene;
-Drift measures how far one shifted, lines them up, and paints every real
-difference in red.
+<img src="assets/banner.png" alt="Drift — find what moved between two images" width="860">
 
-**[Open it →](https://onuryildirim26.github.io/drift/)** ·
-[Examples](https://onuryildirim26.github.io/drift/examples.html) ·
-[Turkish readme](README.tr.md)
+### [**→ Open Drift**](https://onuryildirim26.github.io/drift/) &nbsp;·&nbsp; [Examples](https://onuryildirim26.github.io/drift/examples.html) &nbsp;·&nbsp; [Türkçe](README.tr.md)
 
-Nothing is uploaded. There is no server, no account and no build step — the
-whole thing is three JavaScript files that run in the tab you opened.
+[![Tests](https://github.com/onuryildirim26/drift/actions/workflows/test.yml/badge.svg)](https://github.com/onuryildirim26/drift/actions/workflows/test.yml)
+[![Licence: MIT](https://img.shields.io/badge/licence-MIT-black)](LICENSE)
+[![Dependencies: none](https://img.shields.io/badge/dependencies-none-2f7d5b)](package.json)
+[![Runs in your browser](https://img.shields.io/badge/runs-in%20your%20browser-e5484d)](https://onuryildirim26.github.io/drift/)
+
+<a href="https://buymeacoffee.com/onuryildirim26"><img src="https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=onuryildirim26&button_colour=e5484d&font_colour=ffffff&font_family=Inter&outline_colour=ffffff&coffee_colour=FFDD00" alt="Buy me a coffee" height="44"></a>
+
+</div>
 
 ---
+
+Drop in two photos of the same scene. Drift measures how far one shifted, lines
+them up, and paints every real difference in red. Nothing is uploaded — there is
+no server, no account and no build step, just four JavaScript files running in
+the tab you opened.
 
 ## What it does
 
