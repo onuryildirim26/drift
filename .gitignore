@@ -1,0 +1,30 @@
+# Drift keeps no personal data. These patterns stop any from arriving by accident.
+
+# Images a user dropped in while testing
+/ornek/ozel/
+*.private.png
+*.private.jpg
+
+# Environment and secrets
+.env
+.env.*
+*.key
+*.pem
+
+# OS and editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.idea/
+.vscode/
+*~
+
+# Build output (there should not be any — Drift has no build step)
+node_modules/
+dist/
+build/
+__pycache__/
+
+# Local tooling
+.claude/

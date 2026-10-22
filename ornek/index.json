@@ -1,0 +1,62 @@
+[
+  {
+    "slug": "otopark",
+    "title": "Car park from above",
+    "blurb": "A drone photographs the same car park twice. Between the frames the aircraft drifted, and one car arrived.",
+    "a": "ornek/otopark-a.png",
+    "b": "ornek/otopark-b.png",
+    "truth": {
+      "dx": 23,
+      "dy": 11,
+      "angle": 0,
+      "scale": 1,
+      "change": "one car parked in an empty bay"
+    },
+    "rotation": false
+  },
+  {
+    "slug": "devre",
+    "title": "Circuit board inspection",
+    "blurb": "Two boards off the same line, photographed at slightly different positions. One of them is missing a part.",
+    "a": "ornek/devre-a.png",
+    "b": "ornek/devre-b.png",
+    "truth": {
+      "dx": -14,
+      "dy": 7,
+      "angle": 0,
+      "scale": 1,
+      "change": "one capacitor removed from the board"
+    },
+    "rotation": false
+  },
+  {
+    "slug": "belge",
+    "title": "Scanned page",
+    "blurb": "The same page scanned twice. The second went through the feeder crooked, and someone stamped it in between.",
+    "a": "ornek/belge-a.png",
+    "b": "ornek/belge-b.png",
+    "truth": {
+      "dx": 0,
+      "dy": 0,
+      "angle": -6.5,
+      "scale": 1,
+      "change": "an APPROVED stamp added, page fed in crooked"
+    },
+    "rotation": true
+  },
+  {
+    "slug": "arazi",
+    "title": "Aerial survey, one year apart",
+    "blurb": "A survey flight repeated a year later, lower and slightly off-track, so the whole frame is both shifted and larger.",
+    "a": "ornek/arazi-a.png",
+    "b": "ornek/arazi-b.png",
+    "truth": {
+      "dx": 9,
+      "dy": -6,
+      "angle": 0,
+      "scale": 1.18,
+      "change": "a new warehouse built beside the road"
+    },
+    "rotation": true
+  }
+]

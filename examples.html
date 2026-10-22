@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Examples — Drift</title>
+<meta name="description" content="Four pairs of images with known, exact differences. Open any of them in Drift and watch it measure the shift and mark the change.">
+<link rel="icon" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/drift.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap row">
+    <a class="brand" href="./">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+        <rect x="2.5" y="2.5" width="15" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <rect x="8.5" y="8.5" width="15" height="15" rx="2" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
+      </svg>
+      <span>Drift</span>
+    </a>
+    <nav>
+      <a href="./">Tool</a>
+      <a href="https://github.com/onuryildirim26/drift">Source</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero" style="max-width:none">
+    <h1 style="font-size:clamp(28px,4.4vw,40px)">Four pairs,<br><em>four known answers</em></h1>
+    <p class="lede">Each pair below was generated with an exact transform applied on purpose, so
+       the numbers printed under it are the truth and not an estimate. Open one in
+       Drift and compare what the tool reports against what was actually done.</p>
+  </section>
+
+  <div class="exGrid" id="grid"></div>
+
+  <section class="how">
+    <h2>What makes a good pair</h2>
+    <div class="steps">
+      <div>
+        <h3>Same scene, twice</h3>
+        <p>Drift measures how one frame moved relative to the other. Two unrelated
+           photographs give it nothing to lock onto, and it will say so rather than
+           invent an answer.</p>
+      </div>
+      <div>
+        <h3>Mostly unchanged</h3>
+        <p>The alignment is read from what stayed the same. If more than roughly
+           half the frame is different, there is no longer a dominant shift to find.</p>
+      </div>
+      <div>
+        <h3>Brightness can differ</h3>
+        <p>One photo darker, or shot at a different exposure, is fine — the method
+           throws the magnitude away and keeps only phase. Turn the sensitivity down
+           if an exposure change starts painting the whole frame red.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>
+      <strong>Drift</strong> — open source, no dependencies, nothing leaves your browser.
+      Built by <a href="https://github.com/onuryildirim26">Onur Yıldırım</a>.
+    </p>
+    <p class="links">
+      <a href="https://github.com/onuryildirim26/drift">GitHub</a>
+      <a href="https://github.com/onuryildirim26/drift/blob/main/LICENSE">MIT licence</a>
+      <a href="https://buymeacoffee.com/onuryildirim26">Buy me a coffee</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+(async function () {
+  const grid = document.getElementById("grid");
+  let items;
+  try {
+    items = await (await fetch("ornek/index.json")).json();
+  } catch (e) {
+    grid.innerHTML = '<p class="lede">The examples could not be loaded. ' +
+      'If you opened this file directly from disk, serve the folder over http instead ' +
+      '— browsers block local file reads.</p>';
+    return;
+  }
+
+  const px = (v, pos, neg) => v === 0 ? null : Math.abs(v) + " px " + (v > 0 ? pos : neg);
+
+  grid.innerHTML = items.map(it => {
+    const t = it.truth;
+    const parts = [px(t.dx, "right", "left"), px(t.dy, "down", "up")].filter(Boolean);
+    if (t.angle) parts.push(Math.abs(t.angle) + "° " + (t.angle < 0 ? "clockwise" : "anticlockwise"));
+    if (t.scale !== 1) parts.push("×" + t.scale + " larger");
+    const moved = parts.length ? parts.join(" · ") : "no movement";
+    const href = "index.html?a=" + encodeURIComponent(it.a) +
+                 "&b=" + encodeURIComponent(it.b) + (it.rotation ? "&rot=1" : "");
+    return `
+      <article class="ex">
+        <div class="exPair">
+          <img src="${it.a}" alt="${it.title}, first frame" loading="lazy">
+          <img src="${it.b}" alt="${it.title}, second frame" loading="lazy">
+        </div>
+        <div class="exBody">
+          <h3>${it.title}</h3>
+          <p>${it.blurb}</p>
+          <div class="truth">
+            <b>Moved:</b> ${moved}<br>
+            <b>Changed:</b> ${t.change}
+          </div>
+          <a class="btn" href="${href}">Open in Drift →</a>
+        </div>
+      </article>`;
+  }).join("");
+})();
+</script>
+</body>
+</html>

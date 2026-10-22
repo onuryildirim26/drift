@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drift — find what moved between two images</title>
+<meta name="description" content="Drop in two photos of the same thing. Drift measures how far one moved, lines them up, and paints every real change in red. Runs entirely in your browser.">
+<meta property="og:title" content="Drift — find what moved between two images">
+<meta property="og:description" content="Two images in, every change in red. No upload, no account, no server.">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/drift.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap row">
+    <a class="brand" href="./">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+        <rect x="2.5" y="2.5" width="15" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <rect x="8.5" y="8.5" width="15" height="15" rx="2" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
+      </svg>
+      <span>Drift</span>
+    </a>
+    <nav>
+      <a href="examples.html">Examples</a>
+      <a href="https://github.com/onuryildirim26/drift">Source</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <h1>Find what moved<br><em>between two images</em></h1>
+    <p>Drop in two photos of the same scene. Drift measures how far one shifted, lines them
+       up, and paints every real difference in red.</p>
+    <p class="privacy">Nothing is uploaded. The images never leave this tab.</p>
+  </section>
+
+  <section class="drops" id="drops">
+    <div class="drop" id="dropA" tabindex="0" role="button" aria-label="Choose the first image">
+      <input type="file" id="fileA" accept="image/*" hidden>
+      <div class="slot">A</div>
+      <canvas class="thumb" id="thumbA" hidden></canvas>
+      <div class="dropText"><strong>First image</strong><span>Click, drop or paste</span></div>
+    </div>
+    <div class="drop" id="dropB" tabindex="0" role="button" aria-label="Choose the second image">
+      <input type="file" id="fileB" accept="image/*" hidden>
+      <div class="slot">B</div>
+      <canvas class="thumb" id="thumbB" hidden></canvas>
+      <div class="dropText"><strong>Second image</strong><span>Click, drop or paste</span></div>
+    </div>
+  </section>
+
+  <p class="tryLine" id="tryLine">
+    No images handy? <a href="examples.html">Try one of the examples →</a>
+  </p>
+
+  <section class="result" id="result" hidden>
+
+    <div class="readout" id="readout">
+      <div class="cell"><span>Horizontal</span><b id="rDx">—</b></div>
+      <div class="cell"><span>Vertical</span><b id="rDy">—</b></div>
+      <div class="cell" id="cellRot" hidden><span>Rotation</span><b id="rRot">—</b></div>
+      <div class="cell" id="cellScale" hidden><span>Scale</span><b id="rScale">—</b></div>
+      <div class="cell"><span>Changed</span><b id="rChanged" class="accent">—</b></div>
+      <div class="cell"><span>Match</span><b id="rConf">—</b></div>
+    </div>
+
+    <p class="verdict" id="verdict"></p>
+
+    <div class="viewer">
+      <div class="tabs" role="tablist">
+        <button class="tab is-on" data-view="overlay" role="tab">Changes in red</button>
+        <button class="tab" data-view="swipe" role="tab">Swipe</button>
+        <button class="tab" data-view="side" role="tab">Side by side</button>
+      </div>
+      <div class="stage" id="stage">
+        <canvas id="out"></canvas>
+        <input type="range" id="swipe" min="0" max="100" value="50" hidden aria-label="Swipe between the images">
+      </div>
+    </div>
+
+    <div class="controls">
+      <label class="ctl">
+        <span>Sensitivity <small id="sensVal">medium</small></span>
+        <input type="range" id="sens" min="8" max="90" value="42">
+      </label>
+      <label class="ctl check">
+        <input type="checkbox" id="rot">
+        <span>Also detect rotation &amp; scale<small>slower; use when the camera turned or zoomed</small></span>
+      </label>
+      <div class="ctl actions">
+        <button id="download" class="btn">Download result</button>
+        <button id="reset" class="btn ghost">Start over</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="busy" id="busy" hidden>
+    <div class="spinner" aria-hidden="true"></div>
+    <p id="busyText">Lining the images up…</p>
+  </section>
+
+  <section class="how">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div>
+        <h3>1 · Measure the shift</h3>
+        <p>Both images go through a Fourier transform. Dividing out the magnitude leaves only
+           phase, and the inverse transform of that is a single sharp spike sitting exactly at
+           the offset between them. It is called phase correlation, and because the magnitude
+           is thrown away it is unbothered by one photo being brighter than the other.</p>
+      </div>
+      <div>
+        <h3>2 · Line them up</h3>
+        <p>The second image is resampled by the measured offset. Turn on rotation and scale and
+           a second pass runs first, on a log-polar resampling of the spectrum, where a turn
+           becomes a sideways shift and a zoom becomes a vertical one.</p>
+      </div>
+      <div>
+        <h3>3 · Mark the difference</h3>
+        <p>What remains after alignment is real change. Pixels that differ by more than the
+           sensitivity threshold are painted red, with a majority filter removing the speckle
+           that noise and resampling leave behind.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>
+      <strong>Drift</strong> — open source, no dependencies, nothing leaves your browser.
+      Built by <a href="https://github.com/onuryildirim26">Onur Yıldırım</a>.
+    </p>
+    <p class="links">
+      <a href="https://github.com/onuryildirim26/drift">GitHub</a>
+      <a href="https://github.com/onuryildirim26/drift/blob/main/LICENSE">MIT licence</a>
+      <a href="https://buymeacoffee.com/onuryildirim26">Buy me a coffee</a>
+    </p>
+  </div>
+</footer>
+
+<script src="js/fft.js"></script>
+<script src="js/register.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
