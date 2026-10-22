@@ -25,6 +25,11 @@
 }
 
 *{box-sizing:border-box}
+/* The browser's own [hidden] rule is a bare attribute selector, so any class
+   that sets `display` silently outranks it and the element stays on screen.
+   .thumb and .busy both did exactly that; dark mode hid the evidence because
+   the stray blocks matched the panel behind them. */
+[hidden]{display:none !important}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans);
   overflow-x:hidden;-webkit-font-smoothing:antialiased}
