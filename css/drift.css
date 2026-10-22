@@ -41,6 +41,12 @@ a{color:inherit}
 .top nav{display:flex;gap:20px;font-size:14.5px}
 .top nav a{color:var(--muted);text-decoration:none}
 .top nav a:hover{color:var(--ink)}
+/* Sits with the nav links rather than floating: it is a setting, not an action. */
+.themeBtn{display:grid;place-items:center;width:32px;height:32px;padding:0;margin:-5px 0;
+  border:1px solid var(--line);border-radius:8px;background:var(--panel);
+  color:var(--muted);cursor:pointer;transition:color .15s,border-color .15s}
+.themeBtn:hover{color:var(--ink);border-color:var(--muted)}
+.themeBtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 /* ---- hero ---- */
 .hero{padding:52px 0 30px;max-width:40ch}
@@ -163,4 +169,10 @@ a{color:inherit}
 @media (prefers-reduced-motion:reduce){
   .spinner{animation-duration:2s}
   *{transition:none !important}
+}
+
+/* ---- theme switch ---- */
+@media (prefers-reduced-motion:no-preference){
+  body,.top,.drop,.panel,.viewer,.stage,.ctl,.ex,.foot{
+    transition:background-color .18s ease,border-color .18s ease,color .18s ease}
 }

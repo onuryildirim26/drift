@@ -124,6 +124,7 @@ examples.html     four pairs with known answers
 js/fft.js         radix-2 FFT, no dependencies
 js/register.js    the engine: phase correlation, log-polar, warp, diff mask
 js/app.js         wiring, drawing, the letterbox
+js/theme.js       light/dark: system setting, time of day, and the button
 ornek/_uret.py    generates the example pairs and their ground truth
 tests/            node --test
 ```

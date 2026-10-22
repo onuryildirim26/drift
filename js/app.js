@@ -13,6 +13,14 @@
 
   const state = { A: null, B: null, view: "overlay", last: null };
 
+  /** The surface colour behind a canvas, read from the stylesheet so the
+   *  hand-painted canvases match the rest of the page in either theme. */
+  function stageColour() {
+    const v = getComputedStyle(document.documentElement)
+                .getPropertyValue("--stage").trim();
+    return v || "#1a2026";
+  }
+
   /* ---------- loading ---------- */
 
   function readImage(file) {
@@ -83,7 +91,7 @@
     const tw = Math.max(1, Math.round(box.width)) || 400;
     thumb.width = tw; thumb.height = 190;
     const ctx = thumb.getContext("2d");
-    ctx.fillStyle = "#1a2026"; ctx.fillRect(0, 0, tw, 190);
+    ctx.fillStyle = stageColour(); ctx.fillRect(0, 0, tw, 190);
     const s = Math.min(tw / img.width, 190 / img.height);
     const dw = img.width * s, dh = img.height * s;
     ctx.drawImage(img, (tw - dw) / 2, (190 - dh) / 2, dw, dh);
@@ -242,7 +250,7 @@
 
     if (state.view === "side") {
       c.width = rect.w * 2 + 8; c.height = rect.h;
-      ctx.fillStyle = "#1a2026"; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.fillStyle = stageColour(); ctx.fillRect(0, 0, c.width, c.height);
       ctx.putImageData(imgA, -rect.x, -rect.y);
       ctx.putImageData(imgB, rect.w + 8 - rect.x, -rect.y);
       return;
@@ -363,6 +371,23 @@
     $("result").hidden = true;
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
+
+  // theme.js fires this after a switch. Only the chrome colours change, so the
+  // registration is not re-run — the canvases are simply repainted.
+  window.addEventListener("drift:themechange", () => {
+    ["A", "B"].forEach(w => { if (state[w]) redrawThumb(w, state[w]); });
+    draw();
+  });
+
+  function redrawThumb(which, img) {
+    const thumb = $("thumb" + which);
+    const ctx = thumb.getContext("2d");
+    ctx.fillStyle = stageColour();
+    ctx.fillRect(0, 0, thumb.width, thumb.height);
+    const s = Math.min(thumb.width / img.width, thumb.height / img.height);
+    const dw = img.width * s, dh = img.height * s;
+    ctx.drawImage(img, (thumb.width - dw) / 2, (thumb.height - dh) / 2, dw, dh);
+  }
 
   /* Deep link from the examples page: ?a=…&b=…&rot=1 */
   (async function fromQuery() {

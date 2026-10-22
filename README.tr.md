@@ -125,6 +125,7 @@ examples.html     cevabı bilinen dört çift
 js/fft.js         radix-2 FFT, bağımlılık yok
 js/register.js    motor: faz korelasyonu, log-polar, warp, fark maskesi
 js/app.js         bağlantılar, çizim, bantlama
+js/theme.js       açık/koyu: sistem ayarı, günün saati ve buton
 ornek/_uret.py    örnek çiftleri ve gerçek değerlerini üretir
 tests/            node --test
 ```
